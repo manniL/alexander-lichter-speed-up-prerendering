@@ -1,0 +1,22 @@
+diff --git a/dist/shared/nitro.0a84349b.mjs b/dist/shared/nitro.0a84349b.mjs
+index e9732dc64054908d0e8fb106be7dbfbb3de2b54d..490702a4bea1bda535c6430d8498b2983f395113 100644
+--- a/dist/shared/nitro.0a84349b.mjs
++++ b/dist/shared/nitro.0a84349b.mjs
+@@ -41,6 +41,7 @@ async function prerender(nitro) {
+   };
+   await nitro.hooks.callHook("prerender:config", prerendererConfig);
+   const nitroRenderer = await createNitro(prerendererConfig);
++  const prerenderStart = Date.now()
+   await nitro.hooks.callHook("prerender:init", nitroRenderer);
+   let path = relative(nitro.options.output.dir, nitro.options.output.publicDir);
+   if (!path.startsWith(".")) {
+@@ -204,6 +205,9 @@ async function prerender(nitro) {
+     prerenderedRoutes: nitro._prerenderedRoutes,
+     failedRoutes: [...failedRoutes]
+   });
++  const timeToPrerenderInMs = Date.now() - prerenderStart
++  nitro.logger.log(`\nTime to prerender: ${timeToPrerenderInMs / 1000} seconds`);
++
+   if (nitro.options.prerender.failOnError && failedRoutes.size > 0) {
+     nitro.logger.log("\nErrors prerendering:");
+     for (const route of failedRoutes) {
